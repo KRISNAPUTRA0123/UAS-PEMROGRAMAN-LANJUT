@@ -8,10 +8,8 @@ from pathlib import Path
 # Explicit imports to satisfy Flake8
 import tkinter as tk
 from tkinter import *
-from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage, filedialog, font
-
-from textblob import TextBlob
-import re
+from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage, filedialog, font, ttk, colorchooser
+import tkinter.font as font 
 
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"C:\Users\ASUS\Desktop\Tugas Kuliah Krisna\UAS PEMROGRAMAN LANJUT\Tkinter-Designer-master\build\assets\frame0")
@@ -49,10 +47,9 @@ entry_image_1 = tk.PhotoImage(file=relative_to_assets("entry_1.png"))
 entry_bg_1 = canvas.create_image(350.0, 268.5, image=entry_image_1)
 
 entry_1 = tk.Text(
-    bd=0, bg="#FFFFFF", fg="#000716", highlightthickness=0, wrap=tk.WORD  # Enable word wrapping
+    window, font=('arial', 12)  # Enable word wrapping
 )
-entry_1.place(x=14.0, y=87.0, width=672.0, height=361.0)
-
+entry_1.place(x=0.0, y=80.0, width=700.0)
 
 def saveFile():
     """Saves the content of the entry_1 widget to a user-selected file."""
@@ -65,8 +62,7 @@ def saveFile():
         # Open the selected file in append mode with proper encoding (UTF-8)
         with open(file.name, 'a', encoding='utf-8') as f:
             # Get the text content from the entry_1 widget
-            text_to_save = entry_1.get("1.0", tk.END)  # Get all text (1.0 refers to the beginning)
-
+            text_to_save = entry_1.get(0.0, END)  # Get all text (1.0 refers to the beginning)
             # Write the text content to the file
             f.write(text_to_save)
 
@@ -187,13 +183,25 @@ image_2 = canvas.create_image(
     image=image_image_2
 )
 
+def make_underline():
+    underline_font = font.Font(entry_1, entry_1.cget("font"))
+    underline_font.configure(underline=True)
+
+    entry_1.tag_configure("underline", font=underline_font)
+    current_tags = entry_1.tag_names("sel.first")
+
+    if "underline" in current_tags:
+        entry_1.tag_remove("underline", "sel.first", "sel.last")
+    else:
+        entry_1.tag_add("underline", "sel.first", "sel.last")
+
 button_image_5 = PhotoImage(
     file=relative_to_assets("button_5.png"))
 button_5 = Button(
     image=button_image_5,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: print("button_5 clicked"),
+    command=make_underline,
     relief="flat"
 )
 button_5.place(
@@ -203,13 +211,25 @@ button_5.place(
     height=26.0
 )
 
+def make_italic():
+    italics_font = font.Font(entry_1, entry_1.cget("font"))
+    italics_font.configure(slant="italic")
+
+    entry_1.tag_configure("italic", font=italics_font)
+    current_tags = entry_1.tag_names("sel.first")
+
+    if "italic" in current_tags:
+        entry_1.tag_remove("italic", "sel.first", "sel.last")
+    else:
+        entry_1.tag_add("italic", "sel.first", "sel.last")
+
 button_image_6 = PhotoImage(
     file=relative_to_assets("button_6.png"))
 button_6 = Button(
     image=button_image_6,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: print("button_6 clicked"),
+    command=make_italic,
     relief="flat"
 )
 button_6.place(
@@ -219,24 +239,11 @@ button_6.place(
     height=26.0
 )
 
-def justify_left(text):
-    """Justifies the given text to the left using regular expressions."""
-
-    # Split text into lines
-    lines = text.splitlines()
-
-    # Find the maximum line width
-    max_width = max(len(line) for line in lines)
-
-    # Justify each line to the left using padding
-    justified_lines = [f"{line:<{max_width}}" for line in lines]
-
-    # Join the justified lines into a single string
-    justified_text = "\n".join(justified_lines)
-
-    # Update the Text widget with the justified text (optional)
-    entry_1.delete("1.0", tk.END)  # Clear existing text
-    entry_1.insert("1.0", justified_text)
+def align_left():
+    data = entry_1.get(0.0, END)
+    entry_1.tag_config('left',justify=LEFT)
+    entry_1.delete(0.0, END)
+    entry_1.insert(INSERT, data, 'left')
 
 button_image_7 = PhotoImage(
     file=relative_to_assets("button_7.png"))
@@ -244,7 +251,7 @@ button_7 = Button(
     image=button_image_7,
     borderwidth=0,
     highlightthickness=0,
-    command= justify_left(entry_1.get("1.0", tk.END)),
+    command= align_left,
     relief="flat"
 )
 button_7.place(
@@ -254,26 +261,11 @@ button_7.place(
     height=17.0
 )
 
-def justify_center(text):
-    """Justifies the given text to the center using regular expressions."""
-
-    # Split text into lines
-    lines = text.splitlines()
-
-    # Find the maximum line width
-    max_width = max(len(line) for line in lines)
-
-    # Center each line using padding
-    justified_lines = []
-    for line in lines:
-        padding = int((max_width - len(line)) / 2)
-        justified_line = f"{padding * ' '} {line} {padding * ' '}"
-        justified_lines.append(justified_line)
-
-    # Join the justified lines into a single string
-    justified_text = "\n".join(justified_lines)
-
-    return justified_text
+def align_center():
+    data = entry_1.get(0.0, END)
+    entry_1.tag_config('center',justify=CENTER)
+    entry_1.delete(0.0, END)
+    entry_1.insert(INSERT, data, 'center')
 
 button_image_8 = PhotoImage(
     file=relative_to_assets("button_8.png"))
@@ -281,7 +273,7 @@ button_8 = Button(
     image=button_image_8,
     borderwidth=0,
     highlightthickness=0,
-    command= justify_center(entry_1.get("1.0", tk.END)),
+    command= align_center,
     relief="flat"
 )
 button_8.place(
@@ -291,13 +283,19 @@ button_8.place(
     height=17.0
 )
 
+def align_right():
+    data = entry_1.get(0.0, END)
+    entry_1.tag_config('right',justify=RIGHT)
+    entry_1.delete(0.0, END)
+    entry_1.insert(INSERT, data, 'right')
+
 button_image_9 = PhotoImage(
     file=relative_to_assets("button_9.png"))
 button_9 = Button(
     image=button_image_9,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: print("button_9 clicked"),
+    command=align_right,
     relief="flat"
 )
 button_9.place(
@@ -307,13 +305,20 @@ button_9.place(
     height=17.0
 )
 
+
+def align_justify():
+    data = entry_1.get(0.0, END)
+    entry_1.tag_config('justify',justify=LEFT)
+    entry_1.delete(0.0, END)
+    entry_1.insert(INSERT, data, 'justify')
+
 button_image_10 = PhotoImage(
     file=relative_to_assets("button_10.png"))
 button_10 = Button(
     image=button_image_10,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: print("button_10 clicked"),
+    command=align_justify,
     relief="flat"
 )
 button_10.place(
@@ -323,13 +328,17 @@ button_10.place(
     height=17.0
 )
 
+def font_color():
+    color=colorchooser.askcolor()
+    entry_1.config(fg=color[1])
+
 button_image_11 = PhotoImage(
     file=relative_to_assets("button_11.png"))
 button_11 = Button(
     image=button_image_11,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: print("button_11 clicked"),
+    command= font_color,
     relief="flat"
 )
 button_11.place(
@@ -339,144 +348,49 @@ button_11.place(
     height=26.0
 )
 
-image_image_3 = PhotoImage(
-    file=relative_to_assets("image_3.png"))
-image_3 = canvas.create_image(
-    74.0,
-    52.0,
-    image=image_image_3
-)
+fontSize = 12
+fontStyle = 'arial'
 
-canvas.create_text(
-    23.0,
-    46.0,
-    anchor="nw",
-    text="Times New Roman",
-    fill="#000000",
-    font=("Inter Medium", 10 * -1)
-)
+def update_font(event):
+  global fontSize, fontStyle
+  fontStyle = font_family_variable.get()
+  fontSize = size_variable.get()
+  entry_1.config(font=(fontStyle, fontSize))
 
-button_image_12 = PhotoImage(
-    file=relative_to_assets("button_12.png"))
-button_12 = Button(
-    image=button_image_12,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: print("button_12 clicked"),
-    relief="flat"
-)
-button_12.place(
-    x=119.0,
-    y=47.0,
-    width=7.0,
-    height=10.0
-)
+# FONT FAMILIES
+font_families = font.families()
+font_family_variable = StringVar(value=fontStyle)  # Pre-set with initial style
+font_family_dropdown = ttk.Combobox(window, width=17, values=font_families, state='readonly', textvariable=font_family_variable)
+font_family_dropdown.current(font_families.index('Arial'))
+font_family_dropdown.place(x=16.0, y=42.0)
 
-image_image_4 = PhotoImage(
-    file=relative_to_assets("image_4.png"))
-image_4 = canvas.create_image(
-    179.0,
-    52.0,
-    image=image_image_4
-)
+# FONT SIZE
+size_variable = IntVar(value=fontSize)  # Pre-set with initial size
+font_size_dropdown = ttk.Combobox(window, width=8, textvariable=size_variable, state='readonly', values=tuple(range(8, 80)))
+font_size_dropdown.current(4)
+font_size_dropdown.place(x=148.0, y=42.0)
 
-canvas.create_text(
-    153.0,
-    46.0,
-    anchor="nw",
-    text="12",
-    fill="#000000",
-    font=("Inter Medium", 10 * -1)
-)
+# JARAK ANTAR BARIS (line spacing)
+baris_variable = ["KARYA BY", "1. KRISNA PUTRA NUR QODRI", "2. FAAZA FEBRIYAN ARRIFQI", "3. MOH HARUN"]
+baris_variable_dropdown = ttk.Combobox(window, width=24, textvariable=baris_variable, state='readonly', values=baris_variable)
+baris_variable_dropdown.current(baris_variable.index("KARYA BY"))
+baris_variable_dropdown.place(x=500.0, y=42.0)
 
-button_image_13 = PhotoImage(
-    file=relative_to_assets("button_13.png"))
-button_13 = Button(
-    image=button_image_13,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: print("button_13 clicked"),
-    relief="flat"
-)
-button_13.place(
-    x=198.0,
-    y=47.0,
-    width=7.0,
-    height=10.0
-)
-
-image_image_5 = PhotoImage(
-    file=relative_to_assets("image_5.png"))
-image_5 = canvas.create_image(
-    536.0,
-    52.0,
-    image=image_image_5
-)
-
-canvas.create_text(
-    510.0,
-    46.0,
-    anchor="nw",
-    text="1.0",
-    fill="#000000",
-    font=("Inter Medium", 10 * -1)
-)
-
-button_image_14 = PhotoImage(
-    file=relative_to_assets("button_14.png"))
-button_14 = Button(
-    image=button_image_14,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: print("button_14 clicked"),
-    relief="flat"
-)
-button_14.place(
-    x=555.0,
-    y=47.0,
-    width=7.0,
-    height=10.0
-)
-
-image_image_6 = PhotoImage(
-    file=relative_to_assets("image_6.png"))
-image_6 = canvas.create_image(
-    622.0,
-    52.0,
-    image=image_image_6
-)
-
-button_image_15 = PhotoImage(
-    file=relative_to_assets("button_15.png"))
-button_15 = Button(
-    image=button_image_15,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: print("button_15 clicked"),
-    relief="flat"
-)
-button_15.place(
-    x=641.0,
-    y=47.0,
-    width=7.0,
-    height=10.0
-)
-
-image_image_7 = PhotoImage(
-    file=relative_to_assets("image_7.png"))
-image_7 = canvas.create_image(
-    618.0,
-    52.0,
-    image=image_image_7
-)
+# Bind to a single function for both font style and size updates
+font_family_dropdown.bind('<<ComboboxSelected>>', update_font)
+font_size_dropdown.bind('<<ComboboxSelected>>', update_font)
 
 def make_bold():
-  selection_start = entry_1.index("sel.first")
-  selection_end = entry_1.index("sel.last")
-  if selection_start != selection_end:
-    bold_tag = font.Font(weight="bold")
-    entry_1.tag_configure("bold", font=bold_tag)
-    entry_1.tag_add("bold", selection_start, selection_end)
+    bold_font = font.Font(entry_1, entry_1.cget("font"))
+    bold_font.configure(weight="bold")
+
+    entry_1.tag_configure("bold", font=bold_font)
+    current_tags = entry_1.tag_names("sel.first")
+
+    if "bold" in current_tags:
+        entry_1.tag_remove("bold", "sel.first", "sel.last")
+    else:
+        entry_1.tag_add("bold", "sel.first", "sel.last")
 
 button_image_4 = PhotoImage(
     file=relative_to_assets("button_4.png"))
